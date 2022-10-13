@@ -45,7 +45,8 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:67%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="submit" style="width:30%;margin-bottom:30px;" @click.native.prevent="sampleAPI">API Test</el-button>
 
       <div style="position:relative">
         <div class="tips">
@@ -75,7 +76,9 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { getHelloWorld } from '@/api/sample'
 import SocialSign from './components/SocialSignin'
+import { Message } from 'element-ui'
 
 export default {
   name: 'Login',
@@ -150,6 +153,11 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
+      })
+    },
+    sampleAPI() {
+      getHelloWorld().then(res => {
+        Message.info(res)
       })
     },
     handleLogin() {
