@@ -1,0 +1,57 @@
+name: CICD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/nestjs-starter
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Get verion
+      id: image
+      run: |
+        VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+        echo VERSION=$VERSION
+        echo "::set-output name=version::$VERSION"
+        
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      
+    - name: Login to GitHub Packages Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Docker Build & Push to GitHub Packages
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: |
+          ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+          
+  #deploy:
+  #  runs-on: ubuntu-latest
+  #  needs: build
+
+  #  steps:
+  #    - name: Get verion
+  #      id: image
+  #      run: |
+  #        VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+  #        echo VERSION=$VERSION
+  #        echo "::set-output name=version::$VERSION"
