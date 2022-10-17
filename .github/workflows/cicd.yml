@@ -20,7 +20,7 @@ jobs:
       run: |
         VERSION=$(echo ${{ github.sha }} | cut -c1-8)
         echo VERSION=$VERSION
-        echo "::set-output name=version::$VERSION"
+        echo "IMAGE_VERSION=$VERSION" >> $GITHUB_ENV
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -37,7 +37,7 @@ jobs:
       with:
         push: true
         tags: |
-          ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }}
+          ${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
           
