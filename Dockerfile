@@ -7,5 +7,5 @@ RUN npm run build:prod
 
 FROM nginx as docker-build
 RUN mkdir /app
-COPY --from=build /app/dist /app
+COPY --from=binary-build /app/dist /app
 COPY nginx.conf /etc/nginx/nginx.conf
